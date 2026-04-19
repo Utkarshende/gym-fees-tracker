@@ -23,7 +23,7 @@ try{
 console.log(`Expired updated:${expiredMembers.modifiedCount}`);
 
 
-//finfing member expry in 2 days
+//finding member expiry in 2 days
 
 const twoDaysLater = new Date();
 twoDaysLater.setDate(today.getDate() + 2);
