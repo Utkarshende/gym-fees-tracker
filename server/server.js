@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { startCronJobs } from './utils/cronJobs.js';
+import dashboardRoutes from "./routes/dashboardRoutes.js";
 
 import membersRoutes from './routes/memberRoutes.js';
 import connectDB from './config/db.js';
@@ -15,6 +16,7 @@ const app=express();
 app.use(express.json());
 
 app.use("/api/members",membersRoutes);
+app.use("/api/dashboard",dashboardRoutes);
 
 const PORT = process.env.PORT || 5000;
 
