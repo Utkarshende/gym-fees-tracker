@@ -52,3 +52,30 @@ res.json({message:"Member deleted"});
 res.status(500).json({message:error.message});
     }
 };
+
+export const searchMembers = async (req, res) => {
+  try {
+    const { keyword, status } = req.query;
+
+    let query = {};
+
+    // 🔍 Search by name or phone
+    if (keyword) {
+      query.$or = [
+        { name: { $regex: keyword, $options: "i" } },
+        { phone: { $regex: keyword, $options: "i" } },
+      ];
+    }
+
+    // 🎯 Filter by status
+    if (status && status !== "all") {
+      query.status = status;
+    }
+
+    const members = await Member.find(query).sort({ createdAt: -1 });
+
+    res.json(members);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};

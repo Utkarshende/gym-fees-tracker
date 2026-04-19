@@ -8,6 +8,9 @@ import Memberstable from "./src/MembersTable";
 const Dashboard =()=>{
     const[stats, setStats] = useState({});
     const [members, setMembers] = useState([]);
+    const [serach, setSearch] = useState("");
+    const [filter, setFilter] = useState("all");
+    const [filetredMembers, setFilteredMembers] = useState([]);
 
     useEffect=(()=>{
     fetchData();    
@@ -26,6 +29,18 @@ console.error(error);
     }
 }
 };
+
+const handleSearch = async()=>{
+    try{
+const res = await API.get(
+    `/members/search?search?keyword=${search}&status=${filter}`
+);
+setFilteredMembers(res.data);
+    }
+    catch(error){
+        console.error(error);
+    }
+}
 
 return(
     <div style={styles.container}>

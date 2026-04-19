@@ -17,9 +17,8 @@ const MemberTable = ({members})=>{
                             <td>{new Date (member.endDate).toDateString()}</td>
                         </tr>
                     ))}
-                                            </tbody>
-
-        </table>
+                    
+        </table></tbody>
     );
 };
 
