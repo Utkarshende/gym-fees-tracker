@@ -63,3 +63,9 @@ export const loginAdmin = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
+const adminExists = await Admin.findOne();
+
+if (adminExists) {
+  return res.status(403).json({ message: "Admin already created" });
+}

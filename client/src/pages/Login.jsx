@@ -1,24 +1,39 @@
-import { useEffect, useState } from "react";
-import API from '../services/api.js';
+import { useState } from "react";
+import API from "../services/api.js";
 
 const Login = ({ setAuth }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false); // New State
+  const [showPassword, setShowPassword] = useState(false);
 
-  const handlelogin = async () => {
+  const [isLogin, setIsLogin] = useState(true); // 🔥 toggle login/register
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async () => {
+    if (!email || !password) {
+      return alert("Please fill all fields");
+    }
+
     try {
-      const res = await API.post("/auth/login", { email, password });
+      setLoading(true);
+
+      const url = isLogin ? "/auth/login" : "/auth/register";
+
+      const res = await API.post(url, { email, password });
+
       localStorage.setItem("token", res.data.token);
       setAuth(true);
     } catch (error) {
-      alert("Login failed");
+      alert(error.response?.data?.message || "Something went wrong");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div style={styles.container}>
-      <h2>Admin Login</h2>
+      <h2>{isLogin ? "Admin Login" : "Create Account"}</h2>
+
       <input
         type="email"
         placeholder="Email"
@@ -27,7 +42,7 @@ const Login = ({ setAuth }) => {
         style={styles.input}
       />
 
-      {/* Password Field with Toggle */}
+      {/* Password Field */}
       <div style={styles.passwordWrapper}>
         <input
           type={showPassword ? "text" : "password"}
@@ -36,17 +51,25 @@ const Login = ({ setAuth }) => {
           onChange={(e) => setPassword(e.target.value)}
           style={styles.passwordInput}
         />
-        <span 
-          onClick={() => setShowPassword(!showPassword)} 
+        <span
+          onClick={() => setShowPassword(!showPassword)}
           style={styles.toggleIcon}
         >
-          {showPassword ? "Hide" : "View"} 
+          {showPassword ? "Hide" : "View"}
         </span>
       </div>
 
-      <button onClick={handlelogin} style={styles.button}>
-        Login
+      <button onClick={handleSubmit} style={styles.button}>
+        {loading ? "Please wait..." : isLogin ? "Login" : "Register"}
       </button>
+
+      {/* 🔄 Toggle */}
+      <p style={styles.switchText}>
+        {isLogin ? "Don't have an account?" : "Already have an account?"}
+        <span onClick={() => setIsLogin(!isLogin)} style={styles.switchBtn}>
+          {isLogin ? " Register" : " Login"}
+        </span>
+      </p>
     </div>
   );
 };
@@ -55,9 +78,12 @@ const styles = {
   container: {
     display: "flex",
     flexDirection: "column",
-    gap: "10px",
-    maxWidth: "300px",
+    gap: "12px",
+    maxWidth: "320px",
     margin: "100px auto",
+    background: "#1e293b",
+    padding: "25px",
+    borderRadius: "10px",
   },
   input: {
     padding: "10px",
@@ -66,13 +92,13 @@ const styles = {
     color: "#000",
   },
   passwordWrapper: {
-    position: "relative", // Needed for absolute positioning of the icon
+    position: "relative",
     display: "flex",
     alignItems: "center",
   },
   passwordInput: {
     padding: "10px",
-    paddingRight: "45px", // Leave room for the icon
+    paddingRight: "50px",
     borderRadius: "6px",
     border: "1px solid #ccc",
     color: "#000",
@@ -84,7 +110,6 @@ const styles = {
     cursor: "pointer",
     fontSize: "12px",
     color: "#666",
-    userSelect: "none",
   },
   button: {
     padding: "10px",
@@ -93,6 +118,16 @@ const styles = {
     color: "#fff",
     cursor: "pointer",
     borderRadius: "6px",
+  },
+  switchText: {
+    fontSize: "14px",
+    textAlign: "center",
+  },
+  switchBtn: {
+    color: "#22c55e",
+    cursor: "pointer",
+    marginLeft: "5px",
+    fontWeight: "bold",
   },
 };
 
