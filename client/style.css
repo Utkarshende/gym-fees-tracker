@@ -1,0 +1,9 @@
+body{
+    margin:0;
+    font-family:Arial, sans-serif;
+    background:#0f172a;
+    color:white;
+}
+input, select, button {
+    font-family:inherit;
+}
