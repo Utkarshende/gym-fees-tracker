@@ -1,50 +1,56 @@
-import React from 'react';
-import { useState, useEffect } from 'react';
-import API from '../services/api.js';
-import DashboardCard from '../components/DashboardCard.jsx';
-import MembersTable from '../components/membersTable.jsx';
+import { useEffect, useState } from "react";
+import API from "../services/api";
+import DashboardCard from "../components/DashboardCard";
+import MembersTable from "../components/MembersTable";
 
-function Dashboard() {
-const [stats, setStats]=useState({})
-;
-const [members, setMembers] = useState([]);
+const Dashboard = () => {
+  const [stats, setStats] = useState({});
+  const [members, setMembers] = useState([]);
 
-useEffect(()=>{
+  // ✅ define function FIRST
+  const fetchData = async () => {
+    try {
+      const statsRes = await API.get("/dashboard/stats");
+      const membersRes = await API.get("/dashboard/expiring");
+
+      setStats(statsRes.data);
+      setMembers(membersRes.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  // ✅ then use it
+  useEffect(() => {
     fetchData();
-},[]);
+  }, []);
 
-const fetchdata= async ()=>{
-    const statsRes = await API.get("/dashboard/stats");
-const membersRes =await API.get("/dashboard/expiring");
-
-
-setStats(setMembers.data);
-setMembers(membersRes.data);}
-return (
-    <div style={StyleSheet.container}>
+  return (
+    <div style={styles.container}>
       <h1>Gym Dashboard</h1>
-      <div>
+
+      <div style={styles.cards}>
         <DashboardCard title="Total" value={stats.totalMembers || 0} />
-                <DashboardCard title="Active" value={stats.totalMembers || 0} />
-
-        <DashboardCard title="Expired" value={stats.totalMembers || 0} />
-
+        <DashboardCard title="Active" value={stats.activeMembers || 0} />
+        <DashboardCard title="Expired" value={stats.expiredMembers || 0} />
         <DashboardCard title="Expiring" value={stats.expiringSoon || 0} />
-        </div>
-        <membersTable member={members}/>
+      </div>
+
+      {/* ✅ Correct Component Name */}
+      <MembersTable members={members} />
     </div>
   );
 };
 
-const styles={
-    container:{
-        padding:"20px"
-    },
-    cards:{
-        display:"flex",
-        flexWrap:"wrap",
-        gap:"10px"
-    },
+const styles = {
+  container: {
+    padding: "20px",
+  },
+  cards: {
+    display: "flex",
+    gap: "10px",
+    flexWrap: "wrap",
+  },
 };
 
 export default Dashboard;

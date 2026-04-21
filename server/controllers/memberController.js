@@ -67,7 +67,6 @@ export const searchMembers = async (req, res) => {
       ];
     }
 
-    // 🎯 Filter by status
     if (status && status !== "all") {
       query.status = status;
     }

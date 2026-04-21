@@ -9,15 +9,14 @@ const generateToken = (id) => {
   });
 };
 
-// ✅ Register Admin (Create Account)
 export const registerAdmin = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    const exists = await Admin.findOne({ email });
-
-    if (exists) {
-      return res.status(400).json({ message: "Admin already exists" });
+    // 🔥 Check if ANY admin exists
+    const adminExists = await Admin.findOne();
+    if (adminExists) {
+      return res.status(403).json({ message: "Admin already created" });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -33,6 +32,7 @@ export const registerAdmin = async (req, res) => {
       token: generateToken(admin._id),
     });
   } catch (err) {
+    console.error(err); // always log errors
     res.status(500).json({ message: err.message });
   }
 };
@@ -63,9 +63,3 @@ export const loginAdmin = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
-
-const adminExists = await Admin.findOne();
-
-if (adminExists) {
-  return res.status(403).json({ message: "Admin already created" });
-}
