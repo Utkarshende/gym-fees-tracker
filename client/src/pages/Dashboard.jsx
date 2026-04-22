@@ -1,67 +1,42 @@
 import { useEffect, useState } from "react";
 import API from "../services/api";
-import DashboardCard from "../components/DashboardCard";
-import MembersTable from "../components/MembersTable";
-import AddMemberForm from "../components/AddMemberForm";
-import MemberDetails from "../components/MemberDetails";
+import MemberTable from "../components/members/MemberTable";
+import Button from "../components/ui/Button";
+import { useNavigate } from "react-router-dom";
 
-const Dashboard = () => {
-  const [stats, setStats] = useState({});
-  const [members, setMembers] = useState([]);
-  const [selectedMember, setSelectedMember] = useState(null);
 
-  // ✅ Fetch all data
-  const fetchData = async () => {
-    try {
-      const statsRes = await API.get("/dashboard/stats");
-      const membersRes = await API.get("/members"); // ✅ correct
+function Dashboard() {
+   const [members, setMembers] = useState([]);
+  const navigate = useNavigate();
 
-      setStats(statsRes.data);
-      setMembers(membersRes.data);
-    } catch (error) {
-      console.error("FETCH ERROR:", error);
-    }
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
-
+  const fetchMembers = async () => {
+    const res = await API.get("/members");
+    setMembers(res.data); 
+  
+    useEffect(() => {
+    fetchMembers();
+  }, []);  
+  
+  }
   return (
-    <div style={styles.container}>
-      <h1>Gym Dashboard</h1>
+    <div>
+      <div className="p-6">
+      <div className="flex justify-between mb-4">
+        <h1 className="text-2xl font-bold">Members</h1>
 
-      {/* ✅ Correct function passed */}
-      <AddMemberForm onMemberAdded={fetchData} />
-
-      <div style={styles.cards}>
-        <DashboardCard title="Total" value={stats.totalMembers || 0} />
-        <DashboardCard title="Active" value={stats.activeMembers || 0} />
-        <DashboardCard title="Expired" value={stats.expiredMembers || 0} />
-        <DashboardCard title="Expiring" value={stats.expiringSoon || 0} />
+        <Button onClick={() => navigate("/add-member")}>
+          + Add Member
+        </Button>
       </div>
 
-      {/* ✅ Single table */}
-      <MembersTable members={members} onSelect={setSelectedMember} />
-
-      {/* ✅ Member Details Modal */}
-      <MemberDetails
-        member={selectedMember}
-        onClose={() => setSelectedMember(null)}
+      <MemberTable
+        members={members}
+        onEdit={(m) => navigate(`/member/${m._id}`)}
       />
     </div>
-  );
-};
 
-const styles = {
-  container: {
-    padding: "20px",
-  },
-  cards: {
-    display: "flex",
-    gap: "10px",
-    flexWrap: "wrap",
-  },
-};
+    </div>
+  )
+}
 
-export default Dashboard;
+export default Dashboard
