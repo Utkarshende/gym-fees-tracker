@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import API from "../services/api";
-import Input from "../components/ui/Input";
-import Button from "../components/ui/Button";
-import PaymentCalendar from "../components/members/PaymentCalendar";
+import API from "../../services/api.js";
+import Input from "../../components/ui/Input.jsx"
+import Button from "../../components/ui/Button.jsx";
+import PaymentCalendar from "../../components/members/PaymentCalendar";
 
 function MemberDetails  () {
   const { id } = useParams();

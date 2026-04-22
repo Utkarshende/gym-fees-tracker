@@ -52,6 +52,7 @@ pause: {
   endDate: Date,
 },
   },
+  {lastReminderSent: { $ne: today }},
   { timestamps: true }
 );
 
