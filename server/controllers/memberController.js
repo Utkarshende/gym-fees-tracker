@@ -98,3 +98,25 @@ export const renewMembership = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+export const markMonthlyPayment = async (req, res) => {
+  try {
+    const { month, amount } = req.body;
+
+    const member = await Member.findById(req.params.id);
+
+    const date = new Date();
+    date.setMonth(month);
+
+    member.payments.push({
+      amount,
+      date,
+    });
+
+    await member.save();
+
+    res.json(member);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};

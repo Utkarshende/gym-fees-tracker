@@ -7,6 +7,12 @@ const MemberDetails = ({ member, onClose }) => {
   await API.put(`/members/${member._id}/renew`, { amount });
 
   alert("Membership renewed ✅");
+
+  const sendReminder= async ()=>{
+    await API.post(`/members/${id}/remind`);
+    alert("Reminder Sent")
+  }
+
 };
 
   return (
@@ -26,6 +32,9 @@ const MemberDetails = ({ member, onClose }) => {
 
       <button onClick={onClose}>Close</button>
       <button onClick={handleRenew}>Mark as Paid / Renew</button>
+      <button onClick={sendReminder}>
+        Send Whatsapp Reminder
+      </button>
     </div>
   );
 };

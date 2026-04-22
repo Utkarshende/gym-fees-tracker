@@ -4,7 +4,7 @@ import {
     addMember,
     updateMember,
     deleteMember,searchMembers,
-    renewMembership
+    renewMembership,markMonthlyPayment
 } from "../controllers/memberController.js";
 
 import { protect } from "../middleware/authMiddleware.js";
@@ -18,5 +18,6 @@ router.post("/", protect, addMember);
 router.put("/:id", protect, updateMember);
 router.delete("/:id", protect, deleteMember);
 router.put("/:id/renew", protect, renewMembership);
+router.put("/:id/pay", protect, markMonthlyPayment);
 
 export default router;

@@ -41,11 +41,20 @@ const memberSchema = new mongoose.Schema(
         },
       },
     ],
+    status: {
+  type: String,
+  enum: ["active", "expired", "paused"],
+  default: "active",
+},
+
+pause: {
+  startDate: Date,
+  endDate: Date,
+},
   },
   { timestamps: true }
 );
 
-// ✅ Auto calculate end date
 memberSchema.pre("save", function () {
   const start = new Date(this.startDate);
 

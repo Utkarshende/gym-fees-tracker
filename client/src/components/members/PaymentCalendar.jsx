@@ -6,7 +6,7 @@ const months = [
   "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
 ];
 
-const PaymentCalendar = ({ member, refresh }) => {
+function PaymentCalendar  ({ member, refresh }) {
 
   const handleMark = async (monthIndex) => {
     await API.put(`/members/${member._id}/pay`, {
