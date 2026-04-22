@@ -13,6 +13,18 @@ const MemberDetails = ({ member, onClose }) => {
     alert("Reminder Sent")
   }
 
+  const pauseMember = async () => {
+  const startDate = new Date();
+  const endDate = prompt("Enter resume date (YYYY-MM-DD)");
+
+  await API.put(`/members/${member._id}/pause`, {
+    startDate,
+    endDate,
+  });
+
+  alert("Membership Paused");
+};
+
 };
 
   return (
@@ -32,6 +44,7 @@ const MemberDetails = ({ member, onClose }) => {
 
       <button onClick={onClose}>Close</button>
       <button onClick={handleRenew}>Mark as Paid / Renew</button>
+      <Button onClick={pauseMember}>Pause Membership</Button>
       <button onClick={sendReminder}>
         Send Whatsapp Reminder
       </button>

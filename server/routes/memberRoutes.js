@@ -5,7 +5,7 @@ import {
     updateMember,
     deleteMember,searchMembers,
     renewMembership,markMonthlyPayment,pauseMembership,
-    resumeMembership
+    resumeMembership,getPausedMembers
 } from "../controllers/memberController.js";
 
 import { protect } from "../middleware/authMiddleware.js";
@@ -22,5 +22,6 @@ router.put("/:id/renew", protect, renewMembership);
 router.put("/:id/pay", protect, markMonthlyPayment);
 router.put("/:id/pause", protect, pauseMembership);
 router.put("/:id/resume", protect, resumeMembership);
+router.get("/paused", protect, getPausedMembers);
 
 export default router;

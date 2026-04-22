@@ -155,3 +155,8 @@ export const resumeMembership = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+export const getPausedMembers = async (req, res) => {
+  const members = await Member.find({ status: "paused" });
+  res.json(members);
+};
