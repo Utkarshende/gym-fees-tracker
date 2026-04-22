@@ -120,3 +120,38 @@ export const markMonthlyPayment = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+export const pauseMembership = async (req, res) => {
+  try {
+    const { startDate, endDate } = req.body;
+
+    const member = await Member.findById(req.params.id);
+
+    member.status = "paused";
+    member.pause = {
+      startDate,
+      endDate,
+    };
+
+    await member.save();
+
+    res.json(member);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const resumeMembership = async (req, res) => {
+  try {
+    const member = await Member.findById(req.params.id);
+
+    member.status = "active";
+    member.pause = {};
+
+    await member.save();
+
+    res.json(member);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
