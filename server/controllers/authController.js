@@ -19,6 +19,12 @@ export const registerAdmin = async (req, res) => {
       return res.status(403).json({ message: "Admin already created" });
     }
 
+    if (password.length < 6) {
+  return res.status(400).json({
+    message: "Password must be at least 6 characters",
+  });
+}
+
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const admin = await Admin.create({

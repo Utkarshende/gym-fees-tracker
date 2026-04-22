@@ -8,28 +8,43 @@ const AddMemberForm = ({ onMemberAdded }) => {
   const [fee, setFee] = useState("");
 
   const handleSubmit = async () => {
-    if (!name || !phone || !fee) {
-      return alert("Please fill all fields");
+    // ✅ Name validation
+    if (name.length < 3) {
+      return alert("Name must be at least 3 characters");
+    }
+
+    // ✅ Phone validation (10 digits)
+    if (!/^\d{10}$/.test(phone)) {
+      return alert("Phone must be exactly 10 digits");
+    }
+
+    // ✅ Fee validation (only numbers + positive)
+    if (!/^\d+$/.test(fee)) {
+      return alert("Only numbers allowed in fee");
+    }
+
+    if (Number(fee) <= 0) {
+      return alert("Fee must be greater than 0");
     }
 
     try {
-      await API.post("/members", {
+      const res = await API.post("/members", {
         name,
         phone,
         plan,
-        fee,
+        fee: Number(fee),
       });
 
       alert("Member added ✅");
 
-      // reset form
       setName("");
       setPhone("");
       setFee("");
 
-      onMemberAdded(); // refresh dashboard
+      onMemberAdded();
     } catch (err) {
-      alert("Error adding member");
+      console.error(err);
+      alert(err.response?.data?.message || "Error adding member");
     }
   };
 
@@ -45,9 +60,15 @@ const AddMemberForm = ({ onMemberAdded }) => {
       />
 
       <input
-        placeholder="Phone"
+        placeholder="Phone (10 digits)"
         value={phone}
-        onChange={(e) => setPhone(e.target.value)}
+        maxLength={10} // ✅ limit
+        onChange={(e) => {
+          // allow only numbers
+          if (/^\d*$/.test(e.target.value)) {
+            setPhone(e.target.value);
+          }
+        }}
         style={styles.input}
       />
 
@@ -58,9 +79,14 @@ const AddMemberForm = ({ onMemberAdded }) => {
 
       <input
         placeholder="Fee"
-        type="number"
         value={fee}
-        onChange={(e) => setFee(e.target.value)}
+        onChange={(e) => {
+          if (/^\d*$/.test(e.target.value)) {
+            setFee(e.target.value);
+          } else {
+            alert("Only numbers allowed");
+          }
+        }}
         style={styles.input}
       />
 
@@ -84,15 +110,13 @@ const styles = {
     marginBottom: "10px",
     padding: "8px",
     borderRadius: "6px",
-    border: "none",
   },
   button: {
     padding: "10px",
     background: "#22c55e",
-    border: "none",
     color: "#fff",
+    border: "none",
     borderRadius: "6px",
-    cursor: "pointer",
   },
 };
 

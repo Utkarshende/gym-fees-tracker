@@ -1,26 +1,12 @@
 import Member from "../models/Member.js";
 
-//adding memberr
-
-export const addMember = async (req,res) => {
-try{
-const member = await Member.create(req.body);
-res.status(201).json(member);
-}
-catch(error){
-    res.status(500).json({message:error.message});
-
-}
-};
-
-export const getMembers = async (req, res)=>{
-    try{
-const members = await Member.find().sort({createdAt:-1});
-res.json(members);
-    }
-    catch(error){
-res.status(500).json({message:error.message});
-    }
+export const getMembers = async (req, res) => {
+  try {
+    const members = await Member.find().sort({ createdAt: -1 });
+    res.json(members);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
 
 export const updateMember = async()=> {
@@ -74,6 +60,40 @@ export const searchMembers = async (req, res) => {
     const members = await Member.find(query).sort({ createdAt: -1 });
 
     res.json(members);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const addMember = async (req, res) => {
+  try {
+    console.log("BODY:", req.body); // 👈 DEBUG
+
+    const member = await Member.create(req.body);
+
+    res.status(201).json(member);
+  } catch (error) {
+    console.error("ADD MEMBER ERROR:", error); // 👈 VERY IMPORTANT
+    res.status(500).json({ message: error.message });
+  }
+};
+export const renewMembership = async (req, res) => {
+  try {
+    const { amount } = req.body;
+
+    const member = await Member.findById(req.params.id);
+
+    // extend by 30 days
+    member.endDate = new Date(
+      new Date(member.endDate).getTime() + 30 * 24 * 60 * 60 * 1000
+    );
+
+    // add payment record
+    member.payments.push({ amount });
+
+    await member.save();
+
+    res.json(member);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

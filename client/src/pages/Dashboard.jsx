@@ -2,25 +2,27 @@ import { useEffect, useState } from "react";
 import API from "../services/api";
 import DashboardCard from "../components/DashboardCard";
 import MembersTable from "../components/MembersTable";
+import AddMemberForm from "../components/AddMemberForm";
+import MemberDetails from "../components/MemberDetails";
 
 const Dashboard = () => {
   const [stats, setStats] = useState({});
   const [members, setMembers] = useState([]);
+  const [selectedMember, setSelectedMember] = useState(null);
 
-  // ✅ define function FIRST
+  // ✅ Fetch all data
   const fetchData = async () => {
     try {
       const statsRes = await API.get("/dashboard/stats");
-      const membersRes = await API.get("/dashboard/expiring");
+      const membersRes = await API.get("/members"); // ✅ correct
 
       setStats(statsRes.data);
       setMembers(membersRes.data);
     } catch (error) {
-      console.error(error);
+      console.error("FETCH ERROR:", error);
     }
   };
 
-  // ✅ then use it
   useEffect(() => {
     fetchData();
   }, []);
@@ -29,6 +31,9 @@ const Dashboard = () => {
     <div style={styles.container}>
       <h1>Gym Dashboard</h1>
 
+      {/* ✅ Correct function passed */}
+      <AddMemberForm onMemberAdded={fetchData} />
+
       <div style={styles.cards}>
         <DashboardCard title="Total" value={stats.totalMembers || 0} />
         <DashboardCard title="Active" value={stats.activeMembers || 0} />
@@ -36,8 +41,14 @@ const Dashboard = () => {
         <DashboardCard title="Expiring" value={stats.expiringSoon || 0} />
       </div>
 
-      {/* ✅ Correct Component Name */}
-      <MembersTable members={members} />
+      {/* ✅ Single table */}
+      <MembersTable members={members} onSelect={setSelectedMember} />
+
+      {/* ✅ Member Details Modal */}
+      <MemberDetails
+        member={selectedMember}
+        onClose={() => setSelectedMember(null)}
+      />
     </div>
   );
 };
