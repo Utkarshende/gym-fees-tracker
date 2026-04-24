@@ -22,6 +22,10 @@ function Dashboard() {
     fetchMembers();
   }, []);
 
+const filteredMembers = members.filter((m) =>
+  m.name.toLowerCase().includes(search.toLowerCase())
+);
+
   return (
     <div className="p-6">
       <div className="flex justify-between mb-4">
@@ -46,6 +50,10 @@ function Dashboard() {
           navigate(`/member/${m._id}`);
         }}
       />
+      <MemberTable
+  members={filteredMembers}
+  onEdit={(m) => navigate(`/member/${m._id}`)}
+/>
     </div>
   );
 }
