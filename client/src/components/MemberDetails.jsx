@@ -2,9 +2,13 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import API from "../services/api";
 import Button from "../components/ui/Button.jsx";
+import { useNavigate } from "react-router-dom";
+
 
 function MemberDetails() {
   const { id } = useParams();
+
+  const navigate = useNavigate();
 
   const [member, setMember] = useState({
     name: "",
@@ -53,19 +57,20 @@ function MemberDetails() {
 
     return true;
   };
+const handleUpdate = async () => {
+  if (!validate()) return;
 
-  const handleUpdate = async () => {
-    if (!validate()) return;
+  try {
+    await API.put(`/members/${id}`, member);
 
-    try {
-      await API.put(`/members/${id}`, member);
-      alert("Updated ✅");
-    } catch (err) {
-      console.error(err);
-      alert("Update failed ❌");
-    }
-  };
+    alert("Updated ✅");
 
+    navigate(-1); // 🔥 go back to previous page
+  } catch (err) {
+    console.error(err);
+    alert("Update failed ❌");
+  }
+};
   if (!member) return <p>Loading...</p>;
 
   return (

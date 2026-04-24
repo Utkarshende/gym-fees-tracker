@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 function Dashboard() {
   const [members, setMembers] = useState([]);
   const navigate = useNavigate();
+  const [search, setSearch] = useState("");
 
   const fetchMembers = async () => {
     try {
@@ -17,8 +18,6 @@ function Dashboard() {
       console.error("FETCH ERROR:", err);
     }
   };
-
-  // ✅ CORRECT PLACE
   useEffect(() => {
     fetchMembers();
   }, []);
@@ -27,6 +26,13 @@ function Dashboard() {
     <div className="p-6">
       <div className="flex justify-between mb-4">
         <h1 className="text-2xl font-bold">Members</h1>
+        <input
+  type="text"
+  placeholder="Search by name..."
+  className="border px-3 py-2 rounded w-64"
+  value={search}
+  onChange={(e) => setSearch(e.target.value)}
+/>
 
         <Button onClick={() => navigate("/add-member")}>
           + Add Member

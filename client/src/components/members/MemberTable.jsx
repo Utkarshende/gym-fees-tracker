@@ -49,18 +49,18 @@ function MemberTable ({ members = [], onEdit }) {
                 <td className="p-3">₹{m.fee}</td>
 
                 <td className="p-3">
-                  <span
-                    className={`px-2 py-1 rounded text-sm font-medium ${
-                      m.status === "active"
-                        ? "bg-green-100 text-green-700"
-                        : m.status === "paused"
-                        ? "bg-yellow-100 text-yellow-700"
-                        : "bg-red-100 text-red-700"
-                    }`}
-                  >
-                    {m.status}
-                  </span>
-                </td>
+  <span
+    className={`px-2 py-1 rounded text-sm font-medium ${
+      m.status === "active"
+        ? "bg-green-100 text-green-700"
+        : m.status === "paused"
+        ? "bg-yellow-100 text-yellow-700"
+        : "bg-red-100 text-red-700"
+    }`}
+  >
+    {m.status === "expired" ? "Not Active" : m.status}
+  </span>
+</td>
 
                 <td className="p-3">
                   <Button
