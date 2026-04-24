@@ -5,6 +5,8 @@ import dotenv from 'dotenv';
 import { startCronJobs } from './utils/cronJobs.js';
 import dashboardRoutes from "./routes/dashboardRoutes.js";
 import authRoutes from "./routes/authRoutes.js"
+import testRoutes from "./routes/testRoutes.js";
+
 
 import membersRoutes from './routes/memberRoutes.js';
 import connectDB from './config/db.js';
@@ -29,6 +31,7 @@ app.use(express.json());
 app.use("/api/members",membersRoutes);
 app.use("/api/dashboard",dashboardRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/test", testRoutes);
 
 const PORT = process.env.PORT || 5000;
 

@@ -5,53 +5,82 @@ import Input from "../../components/ui/Input.jsx"
 import Button from "../../components/ui/Button.jsx";
 import PaymentCalendar from "../../components/members/PaymentCalendar";
 
-function MemberDetails  () {
-  const { id } = useParams();
-  const [member, setMember] = useState(null);
+function MemberTable ({ members = [], onEdit }) {
+  const sortedMembers = [...members].sort((a, b) =>
+    (a?.name || "").localeCompare(b?.name || "")
+  );
 
-  const fetchMember = async () => {
-    const res = await API.get(`/members/${id}`);
-    setMember(res.data);
-  };
-
-  useEffect(() => {
-    fetchMember();
-  }, []);
-
-  const handleUpdate = async () => {
-    await API.put(`/members/${id}`, member);
-    alert("Updated ✅");
-  };
-
-  if (!member) return <p>Loading...</p>;
+  if (!sortedMembers.length) {
+    return (
+      <div className="text-center text-gray-500 mt-10">
+        No members found
+      </div>
+    );
+  }
 
   return (
-    <div className="p-6 max-w-3xl mx-auto space-y-4">
-      <h2 className="text-2xl font-bold">Member Details</h2>
+    <div className="overflow-x-auto">
+      <table className="w-full border rounded-lg overflow-hidden shadow-sm">
+        
+        <thead className="bg-gray-800 text-white">
+          <tr>
+            <th className="p-3 text-left">Name</th>
+            <th className="p-3 text-left">Phone</th>
+            <th className="p-3 text-left">Plan</th>
+            <th className="p-3 text-left">Fee</th>
+            <th className="p-3 text-left">Status</th>
+            <th className="p-3 text-left">Action</th>
+          </tr>
+        </thead>
 
-      {/* Editable Fields */}
-      <Input
-        value={member.name}
-        onChange={(e) => setMember({ ...member, name: e.target.value })}
-      />
+        <tbody className="bg-white text-black">
+          {sortedMembers.map((m) => {
+            // ✅ safety check
+            if (!m?._id) {
+              console.warn("Invalid member:", m);
+              return null;
+            }
 
-      <Input
-        value={member.phone}
-        onChange={(e) => setMember({ ...member, phone: e.target.value })}
-      />
+            return (
+              <tr key={m._id} className="border-t hover:bg-gray-50">
+                <td className="p-3">{m.name}</td>
+                <td className="p-3">{m.phone || "-"}</td>
+                <td className="p-3 capitalize">{m.plan}</td>
+                <td className="p-3">₹{m.fee}</td>
 
-      <Input
-        type="number"
-        value={member.fee}
-        onChange={(e) => setMember({ ...member, fee: e.target.value })}
-      />
+                <td className="p-3">
+                  <span
+                    className={`px-2 py-1 rounded text-sm font-medium ${
+                      m.status === "active"
+                        ? "bg-green-100 text-green-700"
+                        : m.status === "paused"
+                        ? "bg-yellow-100 text-yellow-700"
+                        : "bg-red-100 text-red-700"
+                    }`}
+                  >
+                    {m.status}
+                  </span>
+                </td>
 
-      <Button onClick={handleUpdate}>Save Changes</Button>
+                <td className="p-3">
+                  <Button
+                    onClick={() => {
+                      console.log("EDIT CLICKED:", m);
+                      console.log("NAVIGATING TO:", `/member/${m._id}`);
+                      onEdit(m);
+                    }}
+                  >
+                    Edit
+                  </Button>
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
 
-      {/* Payment Calendar */}
-      <PaymentCalendar member={member} refresh={fetchMember} />
+      </table>
     </div>
   );
 };
 
-export default MemberDetails;
+export default MemberTable;

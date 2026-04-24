@@ -18,7 +18,7 @@ const memberSchema = new mongoose.Schema(
     fee: {
       type: Number,
       required: true,
-      min: 1, // ✅ no negative
+      min: 1,
     },
     startDate: {
       type: Date,
@@ -27,11 +27,21 @@ const memberSchema = new mongoose.Schema(
     endDate: {
       type: Date,
     },
+
+    // ✅ Single correct status field
     status: {
       type: String,
-      enum: ["active", "expired"],
+      enum: ["active", "expired", "paused"],
       default: "active",
     },
+
+    // ✅ Pause feature
+    pause: {
+      startDate: Date,
+      endDate: Date,
+    },
+
+    // ✅ Payment history
     payments: [
       {
         amount: Number,
@@ -41,21 +51,16 @@ const memberSchema = new mongoose.Schema(
         },
       },
     ],
-    status: {
-  type: String,
-  enum: ["active", "expired", "paused"],
-  default: "active",
-},
 
-pause: {
-  startDate: Date,
-  endDate: Date,
-},
+    // ✅ Reminder tracking (for cron)
+    lastReminderSent: {
+      type: Date,
+    },
   },
-  {lastReminderSent: { $ne: today }},
   { timestamps: true }
 );
 
+// ✅ Auto calculate end date
 memberSchema.pre("save", function () {
   const start = new Date(this.startDate);
 

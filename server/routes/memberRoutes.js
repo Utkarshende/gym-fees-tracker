@@ -6,12 +6,17 @@ import {
     deleteMember,searchMembers,
     renewMembership,markMonthlyPayment,pauseMembership,
     resumeMembership,getPausedMembers
+    ,getMemberById
 } from "../controllers/memberController.js";
 
 import { protect } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 router.get("/search", protect, searchMembers);
+router.get("/paused", protect, getPausedMembers);
+
+router.get("/:id", protect, getMemberById);
+
 
 router.get("/", protect, getMembers);      
 router.post("/", protect, addMember);     
@@ -22,6 +27,5 @@ router.put("/:id/renew", protect, renewMembership);
 router.put("/:id/pay", protect, markMonthlyPayment);
 router.put("/:id/pause", protect, pauseMembership);
 router.put("/:id/resume", protect, resumeMembership);
-router.get("/paused", protect, getPausedMembers);
 
 export default router;
