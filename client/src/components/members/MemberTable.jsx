@@ -5,7 +5,7 @@ import Input from "../../components/ui/Input.jsx"
 import Button from "../../components/ui/Button.jsx";
 import PaymentCalendar from "../../components/members/PaymentCalendar";
 
-function MemberTable ({ members = [], onEdit }) {
+function MemberTable ({ members = [], onEdit ,onView}) {
   const sortedMembers = [...members].sort((a, b) =>
     (a?.name || "").localeCompare(b?.name || "")
   );
@@ -63,15 +63,25 @@ function MemberTable ({ members = [], onEdit }) {
 </td>
 
                 <td className="p-3">
-                  <Button
-                    onClick={() => {
-                      console.log("EDIT CLICKED:", m);
-                      console.log("NAVIGATING TO:", `/member/${m._id}`);
-                      onEdit(m);
-                    }}
-                  >
-                    Edit
-                  </Button>
+                  <td className="p-3 flex gap-2">
+  <Button onClick={() => onView(m)}>View</Button>
+  <Button onClick={() => onEdit(m)}>Edit</Button>
+</td>
+
+<td className="p-3">
+  {m.payments?.some((p) => {
+    const now = new Date();
+    const d = new Date(p.date);
+    return (
+      d.getMonth() === now.getMonth() &&
+      d.getFullYear() === now.getFullYear()
+    );
+  }) ? (
+    <span className="text-green-600 font-semibold">Paid</span>
+  ) : (
+    <span className="text-red-600 font-semibold">Pending</span>
+  )}
+</td>
                 </td>
               </tr>
             );

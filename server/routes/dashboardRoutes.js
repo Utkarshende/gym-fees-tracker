@@ -4,7 +4,6 @@ import { getDashboardStats, getExpiringMembers } from "../controllers/dashboardC
 const router = express.Router();
 
 router.get("/stats", getDashboardStats);
-router.get("/stats", getDashboardStats);
 router.get("/expiring", getExpiringMembers);
 
 

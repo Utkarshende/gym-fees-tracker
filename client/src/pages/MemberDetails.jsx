@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import API from "../services/api";
+import API from "../services/api.js";
 import Button from "../components/ui/Button.jsx";
 import { useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 
 function MemberDetails() {
@@ -38,6 +39,11 @@ function MemberDetails() {
     if (id) fetchMember();
   }, [id]);
 
+  
+const location = useLocation();
+const mode = new URLSearchParams(location.search).get("mode");
+
+
   // ✅ VALIDATION
   const validate = () => {
     if (member.name.length < 3) {
@@ -58,23 +64,27 @@ function MemberDetails() {
     return true;
   };
 const handleUpdate = async () => {
-  if (!validate()) return;
-
   try {
     await API.put(`/members/${id}`, member);
 
-    alert("Updated ✅");
+    alert("Updated Successfully ✅");
 
-    navigate(-1); // 🔥 go back to previous page
-  } catch (err) {
-    console.error(err);
-    alert("Update failed ❌");
+    navigate(`/member/view/${id}`);
+  } catch (error) {
+    console.error(error);
+    alert("Update failed");
   }
 };
   if (!member) return <p>Loading...</p>;
 
   return (
     <div className="p-6 max-w-5xl mx-auto space-y-6">
+      <button
+  onClick={() => navigate(-1)}
+  className="mb-4 text-blue-600 underline"
+>
+  ← Back
+</button>
       <h2 className="text-3xl font-bold">Member Profile</h2>
 
       {/* PERSONAL INFO */}
@@ -127,6 +137,7 @@ const handleUpdate = async () => {
           <option value="">Select Gender</option>
           <option value="male">Male</option>
           <option value="female">Female</option>
+          
         </select>
       </div>
 
@@ -190,6 +201,46 @@ const handleUpdate = async () => {
           }
         />
 
+        <h3 className="font-semibold">Pause Details</h3>
+
+<input
+  className="input"
+  placeholder="Reason for break"
+  value={member.pause?.reason || ""}
+  onChange={(e) =>
+    setMember({
+      ...member,
+      pause: { ...member.pause, reason: e.target.value },
+    })
+  }
+/>
+
+<input
+  type="date"
+  className="input"
+  value={member.pause?.startDate || ""}
+  onChange={(e) =>
+    setMember({
+      ...member,
+      pause: { ...member.pause, startDate: e.target.value },
+    })
+  }
+/>
+<div className="bg-white p-4 rounded shadow">
+  <h3 className="font-semibold mb-2">Payment History</h3>
+
+  {member.payments?.length ? (
+    member.payments.map((p, i) => (
+      <div key={i} className="flex justify-between border-b py-1">
+        <span>₹{p.amount}</span>
+        <span>{new Date(p.date).toDateString()}</span>
+      </div>
+    ))
+  ) : (
+    <p>No payments yet</p>
+  )}
+</div>
+
         <select
           className="input"
           value={member.status}
@@ -203,7 +254,15 @@ const handleUpdate = async () => {
         </select>
       </div>
 
+      
+
       <Button onClick={handleUpdate}>Save Changes</Button>
+      <button
+  onClick={() => navigate(-1)}
+  className="mb-4 text-blue-600 underline"
+>
+  ← Back
+</button>
     </div>
   );
 }

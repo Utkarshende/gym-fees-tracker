@@ -1,33 +1,76 @@
 import { useState } from "react";
-import API from "../services/api";
-import Input from "../components/ui/Input";
-import Button from "../components/ui/Button";
 import { useNavigate } from "react-router-dom";
+import API from "../services/api";
+import MemberForm from "../components/forms/MemberForm";
 
-function AddMember() 
-    {
-  const [form, setForm] = useState({});
+function AddMember() {
   const navigate = useNavigate();
 
-  const handleSubmit = async () => {
-    await API.post("/members", form);
-    navigate("/");
+  const [member, setMember] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    dob: "",
+    gender: "",
+    address: "",
+    height: "",
+    weight: "",
+    goalWeight: "",
+    plan: "monthly",
+    fee: "",
+    category: "gym",
+    status: "active",
+    pause: {},
+  });
+
+  const validate = () => {
+    if (member.name.trim().length < 3) {
+      alert("Name must be 3 characters minimum");
+      return false;
+    }
+
+    if (!/^\d{10}$/.test(member.phone)) {
+      alert("Phone must be 10 digits");
+      return false;
+    }
+
+    if (Number(member.fee) < 0) {
+      alert("Fee invalid");
+      return false;
+    }
+
+    return true;
   };
+
+  const handleAdd = async () => {
+    if (!validate()) return;
+
+    try {
+      await API.post("/members", member);
+
+      alert("Member Added Successfully ✅");
+
+      navigate("/");
+    } catch (error) {
+      console.error(error);
+      alert("Failed to add member");
+    }
+  };
+
   return (
-         <div className="p-6 max-w-xl mx-auto">
-      <h2 className="text-xl mb-4">Add Member</h2>
+    <div className="max-w-6xl mx-auto p-6">
+      <h1 className="text-3xl font-bold mb-6">
+        Add New Member
+      </h1>
 
-      <Input placeholder="Name" onChange={(e) => setForm({ ...form, name: e.target.value })} />
-      <Input placeholder="Phone" onChange={(e) => setForm({ ...form, phone: e.target.value })} />
-      <Input placeholder="Fee" type="number" onChange={(e) => setForm({ ...form, fee: e.target.value })} />
-
-      <Button onClick={handleSubmit} className="mt-4 w-full">
-        Save
-      </Button>
+      <MemberForm
+        member={member}
+        setMember={setMember}
+        onSubmit={handleAdd}
+        buttonText="Add Member"
+      />
     </div>
   );
-};
-      
+}
 
-
-export default AddMember
+export default AddMember;
